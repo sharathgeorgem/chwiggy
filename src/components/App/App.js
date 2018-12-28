@@ -2,6 +2,7 @@ import React from 'react'
 import { BrowserRouter, Route } from 'react-router-dom'
 
 import HeaderContainer from '../header-container/HeaderContainer'
+import Shop from '../shop/Shop'
 
 import './App.css'
 // import Item from '../Item/Item'
