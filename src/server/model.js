@@ -11,7 +11,9 @@ db.once('open', function () {
 var Items = new mongoose.Schema({
   id: ObjectId,
   name: String,
-  price: Number
+  description: String,
+  price: Number,
+  imageURL: String
 })
 var Orders = new mongoose.Schema({
   items: [{ type: ObjectId, ref: 'Item' }],
@@ -30,6 +32,10 @@ var Users = new mongoose.Schema({
 var Item = mongoose.model('Item', Items)
 var Order = mongoose.model('Order', Orders)
 var User = mongoose.model('User', Users)
+
+exports.getItems = async function () {
+  return Item.find()
+}
 
 exports.getCart = async function (userId) {
   let res = await User.findById(userId).populate('cart')
