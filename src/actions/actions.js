@@ -1,4 +1,4 @@
-const addToCart = (id, count) => (
+export const addToCart = (id, count) => (
   {
     type: 'ADD_TO_CART',
     id,
@@ -6,14 +6,14 @@ const addToCart = (id, count) => (
   }
 )
 
-const removeFromCart = (id) => (
+export const removeFromCart = (id) => (
   {
     type: 'REMOVE_FROM_CART',
     id
   }
 )
 
-const updateCartItem = (id, count) => (
+export const updateCartItem = (id, count) => (
   {
     type: 'UPDATE_CART_ITEM',
     id,
@@ -21,7 +21,7 @@ const updateCartItem = (id, count) => (
   }
 )
 
-const removeStockItem = (id, count) => (
+export const removeStockItem = (id, count) => (
   {
     type: 'REMOVE_STOCK_ITEM',
     id,

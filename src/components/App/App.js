@@ -16,7 +16,6 @@ const App = () => (
       <IndexRoute component={Shop} />
       <Route path='item/:id' component={ItemContainer} />
       <Route path='cart' component={CartContainer} />
-      <Route path='*' component={NoMatch} />
     </Route>
   </Router>
 )
