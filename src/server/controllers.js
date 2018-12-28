@@ -1,5 +1,10 @@
 const model = require('./model')
 
+exports.getItems = async function (req, res) {
+  let result = await model.getItems()
+  res.send(result)
+}
+
 exports.getCart = async function (req, res) {
   let result = await model.getCart(req.params.userId)
   res.send(result)

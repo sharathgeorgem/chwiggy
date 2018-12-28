@@ -4,6 +4,7 @@ const controllers = require('./controllers')
 
 var router = express.Router()
 
+router.get('/items', controllers.getItems)
 router.get('/user/cart/:userId', controllers.getCart)
 router.get('/user/addresses/:userId', controllers.getAddresses)
 router.put('/user/cart/:userId/:itemId', controllers.addItemToCart)
