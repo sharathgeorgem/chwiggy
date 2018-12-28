@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
 
-mongoose.connect('mongodb://localhost/test')
+mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
 var db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', function () {
@@ -26,12 +26,13 @@ var Users = new mongoose.Schema({
   pastOrders: [Orders],
   addresses: [String]
 })
+
 var Item = mongoose.model('Item', Items)
 var Order = mongoose.model('Order', Orders)
 var User = mongoose.model('User', Users)
 
 exports.getCart = async function (userId) {
-  let res = await User.findById(userId)
+  let res = await User.findById(userId).populate('cart')
   return res.cart
 }
 
@@ -43,37 +44,37 @@ exports.getAddresses = async function (userId) {
 exports.addToCart = async function (userId, item) {
   let user = await User.findById(userId)
   user.cart.push(item)
-  user.save(function (err, res) {
-    if (err) return false
-    return res.cart
-  })
+  let res = await user.save()
+  return res.cart
 }
 
 exports.removeFromCart = async function (userId, item) {
   let user = await User.findById(userId)
   user.cart.splice(user.cart.indexOf(item), 1)
-  user.save(function (err, res) {
-    if (err) return false
-    return res.cart
-  })
+  let res = await user.save()
+  return res.cart
 }
 
 exports.addAddress = async function (userId, address) {
   let user = await User.findById(userId)
   user.addresses.push(address)
-  user.save(function (err, res) {
-    if (err) return false
-    return res.addresses
-  })
+  let res = await user.save()
+  return res.addresses
+}
+
+function costOfCart (cart) {
+  let cost = 0
+  for (let item of cart) {
+    cost += item.price
+  }
+  return cost
 }
 
 exports.submitOrder = async function (userId, address) {
-  let user = await User.findById(userId)
-  let order = new Order({ items: user.cart, date: Date.now(), price: 0, address: address })
+  let user = await User.findById(userId).populate('cart')
+  let price = costOfCart(user.cart)
+  let order = new Order({ items: user.cart, date: Date.now(), price: price, address: address })
   user.cart = []
   user.currentOrders.push(order)
-  user.save(function (err, res) {
-    if (err) return false
-    return res.currentOrders
-  })
+  return user.save()
 }
