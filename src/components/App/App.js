@@ -1,16 +1,24 @@
-import React, { Component } from 'react'
-import './App.css'
-import Item from '../Item/Item'
+import React from 'react'
+import { BrowserRouter, Route } from 'react-router-dom'
 
-class App extends Component {
-  render () {
-    return (
-      <div className='App'>
-        <h1>Hello</h1>
-        <Item />
-      </div>
-    )
-  }
-}
+import './App.css'
+// import Item from '../Item/Item'
+
+const {
+  Router,
+  IndexRoute,
+  hashHistory
+} = BrowserRouter
+
+const App = () => (
+  <Router history={hashHistory}>
+    <Route path='/' component={HeaderContainer}>
+      <IndexRoute component={Shop} />
+      <Route path='item/:id' component={ItemContainer} />
+      <Route path='cart' component={CartContainer} />
+      <Route path='*' component={NoMatch} />
+    </Route>
+  </Router>
+)
 
 export default App
