@@ -3,6 +3,7 @@ import { BrowserRouter, Route } from 'react-router-dom'
 
 import HeaderContainer from '../header-container/HeaderContainer'
 import Shop from '../shop/Shop'
+import ItemContainer from '../item-container/item-container'
 
 import './App.css'
 // import Item from '../Item/Item'
