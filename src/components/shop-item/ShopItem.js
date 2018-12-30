@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types'
+import React from 'react'
+import propTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
 const ShopItem = ({ id, name, price, img }) => (
@@ -8,6 +9,7 @@ const ShopItem = ({ id, name, price, img }) => (
         <img
           className='shop-item-image'
           src={img}
+          alt='shop item'
         />
         <h1 className='shop-item-name'>
           {name}
@@ -20,11 +22,11 @@ const ShopItem = ({ id, name, price, img }) => (
   </li>
 )
 
-ShopItem.PropTypes = {
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
-  img: PropTypes.string.isRequired
+ShopItem.propTypes = {
+  id: propTypes.number.isRequired,
+  name: propTypes.string.isRequired,
+  price: propTypes.number.isRequired,
+  img: propTypes.string.isRequired
 }
 
 export default ShopItem

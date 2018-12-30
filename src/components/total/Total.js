@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types'
+import React from 'react'
+import propTypes from 'prop-types'
 
 const Total = ({ cart }) => (
   <div className='cart-total'>
@@ -13,10 +14,10 @@ const Total = ({ cart }) => (
   </div>
 )
 
-Total.PropTypes = {
-  cart: PropTypes.arrayOf(PropTypes.shape({
-    price: PropTypes.number.isRequired,
-    count: PropTypes.number.isRequired
+Total.propTypes = {
+  cart: propTypes.arrayOf(propTypes.shape({
+    price: propTypes.number.isRequired,
+    count: propTypes.number.isRequired
   }).isRequired).isRequired
 }
 

@@ -1,18 +1,20 @@
+import React from 'react'
 import AddItemContainer from '../add-item-container/AddItemContainer'
-import PropTypes from 'prop-types'
+import propTypes from 'prop-types'
 
 const Item = ({ id, name, description, price, img }) => (
   <div className={'item item-' + id}>
     <img
       className='item-image'
       src={img}
+      alt='Item'
     />
     <div className='item-details'>
       <h1 className='item-name'>
         {name}
       </h1>
       <h2 className='item-price'>
-        ${price.toFixed(2)}
+        ₹{price.toFixed(2)}
       </h2>
       <p className='item-desc'>
         {description}
@@ -22,12 +24,12 @@ const Item = ({ id, name, description, price, img }) => (
   </div>
 )
 
-Item.PropTypes = {
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
-  img: PropTypes.string.isRequired
+Item.propTypes = {
+  id: propTypes.number.isRequired,
+  name: propTypes.string.isRequired,
+  description: propTypes.string.isRequired,
+  price: propTypes.number.isRequired,
+  img: propTypes.string.isRequired
 }
 
 export default Item

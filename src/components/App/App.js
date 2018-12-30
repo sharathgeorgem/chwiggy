@@ -1,26 +1,21 @@
 import React from 'react'
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import HeaderContainer from '../header-container/HeaderContainer'
 import Shop from '../shop/Shop'
-import ItemContainer from '../item-container/item-container'
+import ItemContainer from '../item-container/ItemContainer'
+import CartContainer from '../cart-container/CartContainer'
 
-import './App.css'
-// import Item from '../Item/Item'
-
-const {
-  Router,
-  IndexRoute,
-  hashHistory
-} = BrowserRouter
+import './App.scss'
 
 const App = () => (
-  <Router history={hashHistory}>
-    <Route path='/' component={HeaderContainer}>
-      <IndexRoute component={Shop} />
-      <Route path='item/:id' component={ItemContainer} />
-      <Route path='cart' component={CartContainer} />
-    </Route>
+  <Router>
+    <div>
+      <Route path='/' component={HeaderContainer} />
+      <Route exact path='/' component={Shop} />
+      <Route path='/item/:id' component={ItemContainer} />
+      <Route path='/cart' component={CartContainer} />
+    </div>
   </Router>
 )
 

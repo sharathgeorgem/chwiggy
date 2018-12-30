@@ -1,5 +1,6 @@
+import React from 'react'
 import getOptionsArray from '../../functions/functions'
-import PropTypes from 'prop-types'
+import propTypes from 'prop-types'
 
 const AddItem = ({ id, count, onSubmit }) => {
   if (!count) {
@@ -41,7 +42,9 @@ const AddItem = ({ id, count, onSubmit }) => {
   )
 }
 
-AddItem.PropTypes = {
-  count: PropTypes.number.isRequired,
-  onClick: PropTypes.func.isRequired
+AddItem.propTypes = {
+  count: propTypes.number.isRequired,
+  onClick: propTypes.func.isRequired
 }
+
+export default AddItem

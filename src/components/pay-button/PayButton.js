@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types'
+import React from 'react'
+import propTypes from 'prop-types'
 
 const PayButton = ({ onPayClick }) => (
   <button
@@ -10,8 +11,8 @@ const PayButton = ({ onPayClick }) => (
   </button>
 )
 
-PayButton.PropTypes = {
-  onPayClick: PropTypes.func.isRequired
+PayButton.propTypes = {
+  onPayClick: propTypes.func.isRequired
 }
 
 export default PayButton

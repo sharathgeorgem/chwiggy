@@ -1,3 +1,4 @@
+import React from 'react'
 import ShopItemsContainer from '../shop-items-container/ShopItemsContainer'
 
 const Shop = () => (

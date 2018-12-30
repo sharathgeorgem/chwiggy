@@ -1,6 +1,7 @@
+import React from 'react'
 import { Link } from 'react-router-dom'
 import getOptionsArray from '../../functions/functions'
-import PropTypes from 'prop-types'
+import propTypes from 'prop-types'
 
 const CartItem = (
   { id, name, price, img, count, stockCount, onQtyChange, onRemoveClick }
@@ -13,6 +14,7 @@ const CartItem = (
       <img
         className='cart-item-image'
         src={img}
+        alt='cart item'
       />
     </Link>
     <div className='cart-item-info'>
@@ -59,15 +61,15 @@ const CartItem = (
   </li>
 )
 
-CartItem.PropTypes = {
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  price: PropTypes.number.isRequired,
-  img: PropTypes.string.isRequired,
-  count: PropTypes.number.isRequired,
-  stockCount: PropTypes.number.isRequired,
-  onQtyChange: PropTypes.func.isRequired,
-  onRemoveClick: PropTypes.func.isRequired
+CartItem.propTypes = {
+  id: propTypes.number.isRequired,
+  name: propTypes.string.isRequired,
+  price: propTypes.number.isRequired,
+  img: propTypes.string.isRequired,
+  count: propTypes.number.isRequired,
+  stockCount: propTypes.number.isRequired,
+  onQtyChange: propTypes.func.isRequired,
+  onRemoveClick: propTypes.func.isRequired
 }
 
 export default CartItem

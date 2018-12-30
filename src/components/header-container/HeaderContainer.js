@@ -14,8 +14,8 @@ const HeaderContainer = connect(
     {
       children: ownProps.children,
       cartItems: state.cart.length,
-      backButton: showBackButton(ownProps.location.pathname),
-      cartButton: showCartButton(ownProps.location.pathname)
+      backButton: showBackButton(ownProps.history.location.pathname),
+      cartButton: showCartButton(ownProps.history.location.pathname)
     }
   )
 )(Header)

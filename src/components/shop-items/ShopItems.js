@@ -1,5 +1,6 @@
+import React from 'react'
 import ShopItem from '../shop-item/ShopItem'
-import PropTypes from 'prop-types'
+import propTypes from 'prop-types'
 
 const ShopItems = ({ items }) => {
   if (!items.length) {
@@ -21,13 +22,13 @@ const ShopItems = ({ items }) => {
   )
 }
 
-ShopItems.PropTypes = {
-  items: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    count: PropTypes.number.isRequired
+ShopItems.propTypes = {
+  items: propTypes.arrayOf(propTypes.shape({
+    id: propTypes.number.isRequired,
+    name: propTypes.string.isRequired,
+    description: propTypes.string.isRequired,
+    price: propTypes.number.isRequired,
+    count: propTypes.number.isRequired
   }).isRequired).isRequired
 }
 

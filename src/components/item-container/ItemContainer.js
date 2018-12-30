@@ -3,7 +3,7 @@ import Item from '../item/Item'
 
 const ItemContainer = connect(
   (state, ownProps) => (
-    state.stock.find(item => String(item.id) === ownProps.params.id)
+    state.stock.find(item => String(item.id) === ownProps.match.params.id)
   )
 )(Item)
 

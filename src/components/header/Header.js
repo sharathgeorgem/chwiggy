@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import propTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
 const Header = ({ children, cartItems, backButton, cartButton }) => {
@@ -30,10 +30,10 @@ const Header = ({ children, cartItems, backButton, cartButton }) => {
   )
 }
 
-Header.PropTypes = {
-  cartItems: PropTypes.number.isRequired,
-  backButton: PropTypes.bool.isRequired,
-  cartButton: PropTypes.bool.isRequired
+Header.propTypes = {
+  cartItems: propTypes.number.isRequired,
+  backButton: propTypes.bool.isRequired,
+  cartButton: propTypes.bool.isRequired
 }
 
 export default Header
