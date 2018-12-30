@@ -2,26 +2,27 @@ const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
-var db = mongoose.connection
+const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', function () {
   console.log('Mongoose Connected')
 })
 
-var Items = new mongoose.Schema({
+const Items = new mongoose.Schema({
   id: ObjectId,
   name: String,
   description: String,
   price: Number,
-  imageURL: String
+  imageURL: String,
+  available: Boolean
 })
-var Orders = new mongoose.Schema({
+const Orders = new mongoose.Schema({
   items: [{ type: ObjectId, ref: 'Item' }],
   date: Date,
   price: Number,
   address: String
 })
-var Users = new mongoose.Schema({
+const Users = new mongoose.Schema({
   name: String,
   cart: [{ type: ObjectId, ref: 'Item' }],
   currentOrders: [Orders],
@@ -29,9 +30,9 @@ var Users = new mongoose.Schema({
   addresses: [String]
 })
 
-var Item = mongoose.model('Item', Items)
-var Order = mongoose.model('Order', Orders)
-var User = mongoose.model('User', Users)
+const Item = mongoose.model('Item', Items)
+const Order = mongoose.model('Order', Orders)
+const User = mongoose.model('User', Users)
 
 exports.getItems = async function () {
   return Item.find()
