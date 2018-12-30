@@ -22,12 +22,19 @@ const Orders = new mongoose.Schema({
   price: Number,
   address: String
 })
+const Address = new mongoose.Schema({
+  latitude: Number,
+  longitude: Number,
+  value: String,
+  apartment: Number,
+  landmark: String
+})
 const Users = new mongoose.Schema({
   name: String,
   cart: [{ type: ObjectId, ref: 'Item' }],
   currentOrders: [Orders],
   pastOrders: [Orders],
-  addresses: [String]
+  addresses: { home: Address, work: Address, others: [Address] }
 })
 
 const Item = mongoose.model('Item', Items)
