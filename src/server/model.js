@@ -8,21 +8,21 @@ db.once('open', function () {
   console.log('Mongoose Connected')
 })
 
-const Items = new mongoose.Schema({
+const ItemSchema = new mongoose.Schema({
   id: ObjectId,
   name: String,
   description: String,
   price: Number,
-  imageURL: String,
+  img: String,
   available: Boolean
 })
-const Orders = new mongoose.Schema({
+const OrderSchema = new mongoose.Schema({
   items: [{ type: ObjectId, ref: 'Item' }],
   date: Date,
   price: Number,
   address: String
 })
-const Address = new mongoose.Schema({
+const AddressSchema = new mongoose.Schema({
   latitude: Number,
   longitude: Number,
   value: String,
@@ -32,13 +32,14 @@ const Address = new mongoose.Schema({
 const Users = new mongoose.Schema({
   name: String,
   cart: [{ type: ObjectId, ref: 'Item' }],
-  currentOrders: [Orders],
-  pastOrders: [Orders],
-  addresses: { home: Address, work: Address, others: [Address] }
+  currentOrders: [OrderSchema],
+  pastOrders: [OrderSchema],
+  addresses: { home: AddressSchema, work: AddressSchema, others: [AddressSchema] }
 })
 
-const Item = mongoose.model('Item', Items)
-const Order = mongoose.model('Order', Orders)
+const Item = mongoose.model('Item', ItemSchema)
+const Order = mongoose.model('Order', OrderSchema)
+const Address = mongoose.model('Address', AddressSchema)
 const User = mongoose.model('User', Users)
 
 function costOfCart (cart) {
