@@ -2,7 +2,7 @@ const model = require('./model')
 
 exports.getItems = async function (req, res) {
   let result = await model.getItems()
-  res.send(result)
+  res.send({ menu: result })
 }
 
 exports.getCart = async function (req, res) {
