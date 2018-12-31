@@ -2,7 +2,7 @@ const express = require('express')
 
 const controllers = require('./controllers')
 
-var router = express.Router()
+const router = express.Router()
 
 router.get('/items', controllers.getItems)
 router.get('/user/cart/:userId', controllers.getCart)

@@ -1,10 +1,10 @@
 const express = require('express')
 const cors = require('cors')
 
-var router = require('./routes')
+const router = require('./routes')
 
 const port = 8000
-var server = express()
+const server = express()
 
 server.listen(port, function () {
   console.log(`Server listening on port ${port}`)

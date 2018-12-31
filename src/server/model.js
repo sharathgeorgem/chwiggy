@@ -8,31 +8,47 @@ db.once('open', function () {
   console.log('Mongoose Connected')
 })
 
-const Items = new mongoose.Schema({
+const ItemSchema = new mongoose.Schema({
   id: ObjectId,
   name: String,
   description: String,
   price: Number,
-  imageURL: String,
+  img: String,
   available: Boolean
 })
-const Orders = new mongoose.Schema({
+const OrderSchema = new mongoose.Schema({
   items: [{ type: ObjectId, ref: 'Item' }],
   date: Date,
   price: Number,
   address: String
 })
+const AddressSchema = new mongoose.Schema({
+  latitude: Number,
+  longitude: Number,
+  value: String,
+  apartment: Number,
+  landmark: String
+})
 const Users = new mongoose.Schema({
   name: String,
   cart: [{ type: ObjectId, ref: 'Item' }],
-  currentOrders: [Orders],
-  pastOrders: [Orders],
-  addresses: [String]
+  currentOrders: [OrderSchema],
+  pastOrders: [OrderSchema],
+  addresses: { home: AddressSchema, work: AddressSchema, others: [AddressSchema] }
 })
 
-const Item = mongoose.model('Item', Items)
-const Order = mongoose.model('Order', Orders)
+const Item = mongoose.model('Item', ItemSchema)
+const Order = mongoose.model('Order', OrderSchema)
+const Address = mongoose.model('Address', AddressSchema)
 const User = mongoose.model('User', Users)
+
+function costOfCart (cart) {
+  let cost = 0
+  for (let item of cart) {
+    cost += item.price
+  }
+  return cost
+}
 
 exports.getItems = async function () {
   return Item.find()
@@ -40,7 +56,7 @@ exports.getItems = async function () {
 
 exports.getCart = async function (userId) {
   let res = await User.findById(userId).populate('cart')
-  return res.cart
+  return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
 exports.getAddresses = async function (userId) {
@@ -51,15 +67,15 @@ exports.getAddresses = async function (userId) {
 exports.addToCart = async function (userId, item) {
   let user = await User.findById(userId)
   user.cart.push(item)
-  let res = await user.save()
-  return res.cart
+  let res = await user.save().populate('cart')
+  return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
 exports.removeFromCart = async function (userId, item) {
   let user = await User.findById(userId)
   user.cart.splice(user.cart.indexOf(item), 1)
-  let res = await user.save()
-  return res.cart
+  let res = await user.save().populate('cart')
+  return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
 exports.addAddress = async function (userId, address) {
@@ -69,18 +85,10 @@ exports.addAddress = async function (userId, address) {
   return res.addresses
 }
 
-function costOfCart (cart) {
-  let cost = 0
-  for (let item of cart) {
-    cost += item.price
-  }
-  return cost
-}
-
 exports.submitOrder = async function (userId, address) {
   let user = await User.findById(userId).populate('cart')
   let price = costOfCart(user.cart)
-  let order = new Order({ items: user.cart, date: Date.now(), price: price, address: address })
+  let order = new Order({ items: user.cart, date: Date.now(), total: price, address: address })
   user.cart = []
   user.currentOrders.push(order)
   return user.save()
