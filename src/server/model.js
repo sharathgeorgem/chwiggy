@@ -8,28 +8,35 @@ db.once('open', function () {
   console.log('Mongoose Connected')
 })
 
-const ItemSchema = new mongoose.Schema({
-  id: ObjectId,
+function createSchema (contents) {
+  let schema = new mongoose.Schema(contents)
+  schema.virtual('id').get(function () { return this._id })
+  schema.set('toObject', { virtuals: true })
+  schema.set('toJSON', { virtuals: true })
+  return schema
+}
+
+const ItemSchema = createSchema({
   name: String,
   description: String,
   price: Number,
   img: String,
   available: Boolean
 })
-const OrderSchema = new mongoose.Schema({
+const OrderSchema = createSchema({
   items: [{ type: ObjectId, ref: 'Item' }],
   date: Date,
   price: Number,
   address: String
 })
-const AddressSchema = new mongoose.Schema({
+const AddressSchema = createSchema({
   latitude: Number,
   longitude: Number,
   value: String,
   apartment: Number,
   landmark: String
 })
-const Users = new mongoose.Schema({
+const Users = createSchema({
   name: String,
   cart: [{ type: ObjectId, ref: 'Item' }],
   currentOrders: [OrderSchema],
