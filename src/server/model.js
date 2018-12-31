@@ -85,7 +85,7 @@ exports.removeFromCart = async function (userId, item) {
   return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
-exports.addAddress = async function (userId, address) {
+exports.addAddress = async function (userId, address) { // need to change
   let user = await User.findById(userId)
   user.addresses.push(address)
   let res = await user.save()
