@@ -2,7 +2,7 @@ const model = require('./model')
 
 exports.getItems = async function (req, res) {
   let result = await model.getItems()
-  res.send(result)
+  res.send({ menu: result })
 }
 
 exports.getCart = async function (req, res) {
@@ -12,7 +12,7 @@ exports.getCart = async function (req, res) {
 
 exports.getAddresses = async function (req, res) {
   let result = await model.getAddresses(req.params.userId)
-  res.send(result)
+  res.send({ addresses: result })
 }
 
 exports.addItemToCart = async function (req, res) {
@@ -27,7 +27,7 @@ exports.removeItemFromCart = async function (req, res) {
 
 exports.addAddress = async function (req, res) {
   let result = await model.addAddress(req.params.userId, req.params.address)
-  res.send(result)
+  res.send({ addresses: result })
 }
 
 exports.submitOrder = async function (req, res) {

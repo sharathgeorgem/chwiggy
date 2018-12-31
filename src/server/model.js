@@ -50,7 +50,7 @@ function costOfCart (cart) {
 }
 
 exports.getItems = async function () {
-  return { menu: Item.find() }
+  return Item.find()
 }
 
 exports.getCart = async function (userId) {
@@ -60,7 +60,7 @@ exports.getCart = async function (userId) {
 
 exports.getAddresses = async function (userId) {
   let res = await User.findById(userId)
-  return { addresses: res.addresses }
+  return res.addresses
 }
 
 exports.addToCart = async function (userId, item) {
@@ -81,7 +81,7 @@ exports.addAddress = async function (userId, address) {
   let user = await User.findById(userId)
   user.addresses.push(address)
   let res = await user.save()
-  return { addresses: res.addresses }
+  return res.addresses
 }
 
 exports.submitOrder = async function (userId, address) {
