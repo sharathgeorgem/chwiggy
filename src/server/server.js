@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors')
-const io = require('./socket.io')
+const io = require('socket.io')
 
 const router = require('./routes')
 
@@ -16,7 +16,7 @@ const server = app.listen(port, function () {
   console.log(`Server listening on port ${port}`)
 })
 
-io.listen(server)
+let serverSocket = io.listen(server)
 
 var connections = {}
 
@@ -24,7 +24,7 @@ function addConnection (id, client) {
   connections[id] = client
 }
 
-io.on('connection', client => {
+serverSocket.on('connection', client => {
   console.log('Connection made')
   client.on('identify', id => addConnection(id, client))
   client.on('acceptOrder') // set order to accepted, emit event to deliverers
