@@ -23,12 +23,6 @@ const ItemSchema = createSchema({
   img: String,
   available: Boolean
 })
-const OrderSchema = createSchema({
-  items: [{ type: ObjectId, ref: 'Item' }],
-  date: Date,
-  price: Number,
-  address: String
-})
 const AddressSchema = createSchema({
   latitude: Number,
   longitude: Number,
@@ -36,18 +30,47 @@ const AddressSchema = createSchema({
   apartment: Number,
   landmark: String
 })
-const Users = createSchema({
+const OrderSchema = createSchema({
+  restaurant: { type: ObjectId, ref: 'Restaurant' },
+  items: [{ type: ObjectId, ref: 'Item' }],
+  timePlaced: Date,
+  accepted: Boolean,
+  timeFulfilled: Date,
+  deliverer: { type: ObjectId, ref: 'Deliverer' },
+  price: Number,
+  address: AddressSchema
+})
+const UserSchema = createSchema({
   name: String,
   cart: [{ type: ObjectId, ref: 'Item' }],
-  currentOrders: [OrderSchema],
-  pastOrders: [OrderSchema],
+  currentOrders: [{ type: ObjectId, ref: 'Order' }],
+  pastOrders: [{ type: ObjectId, ref: 'Order' }],
   addresses: { home: AddressSchema, work: AddressSchema, others: [AddressSchema] }
+})
+const RestaurantSchema = createSchema({
+  name: String,
+  address: AddressSchema,
+  cost: Number,
+  score: Number,
+  votes: Number,
+  cuisines: [String],
+  phone: [String],
+  menu: [{ type: ObjectId, ref: 'Item' }],
+  currentOrders: [{ type: ObjectId, ref: 'Order' }],
+  pastOrders: [{ type: ObjectId, ref: 'Order' }]
+})
+const DelivererSchema = createSchema({
+  name: String,
+  score: Number,
+  votes: Number
 })
 
 const Item = mongoose.model('Item', ItemSchema)
 const Order = mongoose.model('Order', OrderSchema)
-const Address = mongoose.model('Address', AddressSchema)
-const User = mongoose.model('User', Users)
+// const Address = mongoose.model('Address', AddressSchema)
+const User = mongoose.model('User', UserSchema)
+const Restaurant = mongoose.model('Restaurant', RestaurantSchema)
+const Deliverer = mongoose.model('Deliverer', DelivererSchema)
 
 function costOfCart (cart) {
   let cost = 0
