@@ -4,6 +4,7 @@ const controllers = require('./controllers')
 
 const router = express.Router()
 
+router.get('/user/dummy', controllers.getDummyUser) // only for development
 router.get('/items', controllers.getItems)
 router.get('/user/cart/:userId', controllers.getCart)
 router.get('/user/addresses/:userId', controllers.getAddresses)

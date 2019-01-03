@@ -1,5 +1,10 @@
 const model = require('./model')
 
+exports.getDummyUser = async function (req, res) {
+  let result = await model.getDummyUser()
+  res.send({ id: result })
+}
+
 exports.getItems = async function (req, res) {
   let result = await model.getItems()
   res.send({ menu: result })

@@ -98,6 +98,10 @@ function getAddressFromId (user, id) {
 }
 
 // Exported methods
+exports.getDummyUser = async function () {
+  let users = await User.find()
+  return users[0].id
+}
 
 exports.getItems = async function () {
   return Item.find()
