@@ -3,6 +3,7 @@ const cors = require('cors')
 const io = require('socket.io')
 
 const router = require('./routes')
+const eventControllers = require('./eventControllers')
 
 const port = 8000
 const app = express()
@@ -27,10 +28,11 @@ function addConnection (id, client) {
 serverSocket.on('connection', client => {
   console.log('Connection made')
   client.on('identify', id => addConnection(id, client))
-  client.on('acceptOrder') // set order to accepted, emit event to deliverers
-  client.on('acceptDelivery')
-  client.on('arrivedAtRestaurant')
-  client.on('pickedUp')
-  client.on('delivered')
-  client.on('updateLocation')
+  client.on('placeOrder', (userId, addressId) => eventControllers.placeOrder(userId, addressId, connections))
+  client.on('acceptOrder', (orderId) => eventControllers.acceptOrder(orderId, connections))
+  client.on('acceptDelivery', (delivererId, orderId) => eventControllers.acceptDelivery(delivererId, orderId, connections))
+  client.on('arrivedAtRestaurant', (orderId) => eventControllers.arrivedRestaurant(orderId, connections))
+  client.on('pickedUp', (orderId) => eventControllers.pickedUp(orderId, connections))
+  client.on('delivered', (orderId) => eventControllers.delivered(orderId, connections))
+  client.on('updateLocation', (delivererId, location) => eventControllers.updateLocation(delivererId, location))
 })

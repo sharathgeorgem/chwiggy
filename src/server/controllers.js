@@ -26,11 +26,11 @@ exports.removeItemFromCart = async function (req, res) {
 }
 
 exports.addAddress = async function (req, res) {
-  let result = await model.addAddress(req.params.userId, req.params.address)
+  let result = await model.addAddress(req.params.userId, req.body.address)
   res.send({ addresses: result })
 }
 
-exports.submitOrder = async function (req, res) {
-  let result = await model.submitOrder(req.params.userId, req.params.address)
+exports.setCart = async function (req, res) {
+  let result = await model.setCart(req.params.userId, req.body.cart)
   res.send(result)
 }
