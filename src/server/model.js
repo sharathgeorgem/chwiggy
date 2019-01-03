@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
 
+// Connect to database
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
@@ -8,6 +9,7 @@ db.once('open', function () {
   console.log('Mongoose Connected')
 })
 
+// Schemas
 function createSchema (contents) {
   let schema = new mongoose.Schema(contents)
   schema.virtual('id').get(function () { return this._id })
@@ -28,7 +30,7 @@ const AddressSchema = createSchema({
   latitude: Number,
   longitude: Number,
   value: String,
-  apartment: Number,
+  apartment: String,
   landmark: String
 })
 const OrderSchema = createSchema({
@@ -69,12 +71,15 @@ const DelivererSchema = createSchema({
   currentOrders: [{ type: ObjectId, ref: 'Order' }]
 })
 
+// Models
 const Item = mongoose.model('Item', ItemSchema)
 const Order = mongoose.model('Order', OrderSchema)
 const Address = mongoose.model('Address', AddressSchema)
 const User = mongoose.model('User', UserSchema)
 const Restaurant = mongoose.model('Restaurant', RestaurantSchema)
 const Deliverer = mongoose.model('Deliverer', DelivererSchema)
+
+// Helper functions
 
 function costOfCart (cart) {
   let cost = 0
@@ -92,6 +97,8 @@ function getAddressFromId (user, id) {
   } return user.addresses.others[user.addresses.others.findIndex(obj => obj._id === id)]
 }
 
+// Exported methods
+
 exports.getItems = async function () {
   return Item.find()
 }
@@ -104,6 +111,15 @@ exports.getCart = async function (userId) {
 exports.getAddresses = async function (userId) {
   let res = await User.findById(userId)
   return res.addresses
+}
+
+exports.getDelivererName = async function (delivererId) {
+  let res = await Deliverer.findById(delivererId)
+  return res.name
+}
+
+exports.getOrderDetails = async function (orderId) {
+  return Order.findById(orderId)
 }
 
 exports.addToCart = async function (userId, item) {
@@ -131,10 +147,8 @@ exports.removeFromCart = async function (userId, item) {
 }
 
 exports.setCart = async function (userId, cartContents) {
-  let user = await User.findById(userId)
-  user.cart = cartContents
-  let res = await user.save().populate('cart')
-  return { cart: res.cart, total: costOfCart(res.cart) }
+  let user = await User.findByIdAndUpdate(userId, { cart: cartContents }).populate('cart')
+  return { cart: user.cart, total: costOfCart(user.cart) }
 }
 
 exports.addAddress = async function (userId, address) { // need to change
@@ -157,5 +171,37 @@ exports.submitOrder = async function (userId, addressId) {
   restaurant.currentOrders.push(order)
   restaurant.save()
 
+  return order
+}
+
+exports.acceptOrder = async function (orderId) {
+  return Order.findByIdAndUpdate(orderId, { accepted: true })
+}
+
+exports.acceptDelivery = async function (deliverer, orderId) {
+  let order = await Order.findById(orderId)
+  if (order.deliverer) return false
+  order['deliverer'] = deliverer
+  return order.save()
+}
+
+exports.pickedUp = async function (orderId) {
+  let order = await Order.findByIdAndUpdate(orderId, { timeFulfilled: Date.now() })
+  let restaurant = await Restaurant.findById(order.restaurant)
+  restaurant.currentOrders.splice(restaurant.currentOrders.indexOf(orderId), 1)
+  restaurant.pastOrders.push(order)
+  restaurant.save()
+  return order
+}
+
+exports.delivered = async function (orderId) {
+  let order = await Order.findByIdAndUpdate(orderId, { timeDelivered: Date.now() })
+  let user = await User.findById(order.customer)
+  user.currentOrders.splice(user.currentOrders.indexOf(orderId), 1)
+  user.pastOrders.push(order)
+  user.save()  // update db re order
+  let deliverer = await Deliverer.findById(order.deliverer)
+  deliverer.currentOrders.splice(deliverer.currentOrders.indexOf(orderId), 1)
+  deliverer.save()
   return order
 }

@@ -19,20 +19,27 @@ const server = app.listen(port, function () {
 
 let serverSocket = io.listen(server)
 
-var connections = {}
+var connections = {
+  deliverers: {}
+}
 
 function addConnection (id, client) {
   connections[id] = client
 }
 
+function addDeliverer (id, client) {
+  connections.deliverers[id] = client
+}
+
 serverSocket.on('connection', client => {
   console.log('Connection made')
   client.on('identify', id => addConnection(id, client))
+  client.on('identifyDeliverer', id => addDeliverer(id, client))
   client.on('placeOrder', (userId, addressId) => eventControllers.placeOrder(userId, addressId, connections))
   client.on('acceptOrder', (orderId) => eventControllers.acceptOrder(orderId, connections))
   client.on('acceptDelivery', (delivererId, orderId) => eventControllers.acceptDelivery(delivererId, orderId, connections))
   client.on('arrivedAtRestaurant', (orderId) => eventControllers.arrivedRestaurant(orderId, connections))
   client.on('pickedUp', (orderId) => eventControllers.pickedUp(orderId, connections))
   client.on('delivered', (orderId) => eventControllers.delivered(orderId, connections))
-  client.on('updateLocation', (delivererId, location) => eventControllers.updateLocation(delivererId, location))
+  client.on('updateLocation', (delivererId, location) => eventControllers.updateLocation(delivererId, location, connections))
 })

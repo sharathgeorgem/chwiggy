@@ -44,7 +44,7 @@ db.once('open', function () {
   var Chocolate = new Item({ name: "Maulik's Chocolate", description: '100% Cocoa', price: 100, img: 'http://www.chocablog.com/wp-content/uploads/2008/09/chocolat-bonnat-2.jpg', available: true })
   var Pizza = new Item({ name: 'Happy Pizza', description: 'Not legal in all territories, conditions apply', price: 200, img: 'http://2.bp.blogspot.com/_Vh8ATwGRVqo/SvACUfs2A-I/AAAAAAAAKVk/KHyl0oKRNRA/s320/happy+pizza.JPG', available: true })
   var Jadesh = new User({ name: 'Jadesh Shetty', cart: [], currentOrders: [], pastOrders: [], addresses: ['2698, 19th Main, 5th Cross, Indiranagar HAL 2nd Stage, Bangalore - 560008'] })
-
+// change address
   Wine.save().then(console.log)
   Coffee.save().then(console.log)
   Chocolate.save().then(console.log)
