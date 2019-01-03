@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
 
 // Connect to database
+
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
@@ -10,6 +11,7 @@ db.once('open', function () {
 })
 
 // Schemas
+
 function createSchema (contents) {
   let schema = new mongoose.Schema(contents)
   schema.virtual('id').get(function () { return this._id })
@@ -72,6 +74,7 @@ const DelivererSchema = createSchema({
 })
 
 // Models
+
 const Item = mongoose.model('Item', ItemSchema)
 const Order = mongoose.model('Order', OrderSchema)
 const Address = mongoose.model('Address', AddressSchema)
@@ -98,29 +101,34 @@ function getAddressFromId (user, id) {
 }
 
 // Exported methods
+
 exports.getDummyUser = async function () {
   let users = await User.find()
   return users[0].id
 }
 
 exports.addUser = async function (name) {
-  return new User({ name: name, cart: [], currentOrders: [], pastOrders: [],  addresses: { home: {}, work: {}, others: [] } })
+  let user = new User({ name: name, cart: [], currentOrders: [], pastOrders: [],  addresses: { home: {}, work: {}, others: [] } })
+  return user.save()
 }
 
 exports.addRestaurant = async function (restaurantDetails) {
   let address = new Address(restaurantDetails.address)
-  return new Restaurant({ name: restaurantDetails.name, address: address, cost: restaurantDetails.cost, score: 0, votes: 0, cuisines: restaurantDetails.cuisines, phone: restaurantDetails.phone, menu: [], currentOrders: [], pastOrders: [] })
+  let restaurant = new Restaurant({ name: restaurantDetails.name, address: address, cost: restaurantDetails.cost, score: 0, votes: 0, cuisines: restaurantDetails.cuisines, phone: restaurantDetails.phone, menu: [], currentOrders: [], pastOrders: [] })
+  return restaurant.save()
 }
 
 exports.addDeliverer = async function (name) {
-  return new Deliverer({ name: name, score: 0, votes: 0, currentOrders: [] })
+  let deliverer = new Deliverer({ name: name, score: 0, votes: 0, currentOrders: [] })
+  return deliverer.save()
 }
 
 exports.addItem = async function (itemDetails) {
   let item = new Item(itemDetails)
+  await item.save()
   let restaurant = await Restaurant.findById(itemDetails.restaurant)
   restaurant.menu.push(item.id)
-  restaurant.save()
+  await restaurant.save()
   return item
 }
 
@@ -178,6 +186,7 @@ exports.setCart = async function (userId, cartContents) {
 
 exports.addAddress = async function (userId, addressType, addressDetails) {
   let address = new Address (addressDetails)
+  await address.save()
   let user = await User.findById(userId)
   if (addressType === 'home' || addressType === 'work') {
     user.addresses[addressType] = address
@@ -191,13 +200,15 @@ exports.submitOrder = async function (userId, addressId) {
   let price = costOfCart(user.cart)
   let address = getAddressFromId(user, addressId)
   let order = new Order({ customer: userId, restaurant: user.cart[0].restaurant, items: user.cart, timePlaced: Date.now(), accepted: false, total: price, address: address })
-  user.cart = [] // await issues?
+  await order.save()
+
+  user.cart = []
   user.currentOrders.push(order)
-  user.save()
+  await user.save()
 
   let restaurant = await Restaurant.findById(user.cart[0].restaurant)
   restaurant.currentOrders.push(order)
-  restaurant.save()
+  await restaurant.save()
 
   return order
 }
@@ -218,7 +229,7 @@ exports.pickedUp = async function (orderId) {
   let restaurant = await Restaurant.findById(order.restaurant)
   restaurant.currentOrders.splice(restaurant.currentOrders.indexOf(orderId), 1)
   restaurant.pastOrders.push(order)
-  restaurant.save()
+  await restaurant.save()
   return order
 }
 
@@ -227,9 +238,11 @@ exports.delivered = async function (orderId) {
   let user = await User.findById(order.customer)
   user.currentOrders.splice(user.currentOrders.indexOf(orderId), 1)
   user.pastOrders.push(order)
-  user.save()  // update db re order
+  await user.save()
+
   let deliverer = await Deliverer.findById(order.deliverer)
   deliverer.currentOrders.splice(deliverer.currentOrders.indexOf(orderId), 1)
-  deliverer.save()
+  await deliverer.save()
+  
   return order
 }

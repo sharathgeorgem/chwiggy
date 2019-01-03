@@ -1,3 +1,4 @@
+// DEPRECATED, will be removed once alternate is tested
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
 

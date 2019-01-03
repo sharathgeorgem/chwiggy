@@ -11,7 +11,7 @@ exports.addUser = async function (req, res) {
 }
 
 exports.addRestaurant = async function (req, res) {
-  let result = await model.addRestaurant(req.body.restaurant)
+  let result = await model.addRestaurant(req.body)
   res.send(result)
 }
 
@@ -21,7 +21,7 @@ exports.addDeliverer = async function (req, res) {
 }
 
 exports.addItem = async function (req, res) {
-  let result = await model.addItem(req.body.item)
+  let result = await model.addItem(req.body)
   res.send(result)
 }
 
@@ -50,7 +50,7 @@ exports.removeItemFromCart = async function (req, res) {
   res.send(result)
 }
 
-exports.addAddress = async function (req, res) {
+exports.addAddress = async function (req, res) { // need to add geocoding as middleware here
   let result = await model.addAddress(req.params.userId, req.params.addressType, req.body.address)
   res.send({ addresses: result })
 }
