@@ -103,6 +103,27 @@ exports.getDummyUser = async function () {
   return users[0].id
 }
 
+exports.addUser = async function (name) {
+  return new User({ name: name, cart: [], currentOrders: [], pastOrders: [],  addresses: { home: {}, work: {}, others: [] } })
+}
+
+exports.addRestaurant = async function (restaurantDetails) {
+  let address = new Address(restaurantDetails.address)
+  return new Restaurant({ name: restaurantDetails.name, address: address, cost: restaurantDetails.cost, score: 0, votes: 0, cuisines: restaurantDetails.cuisines, phone: restaurantDetails.phone, menu: [], currentOrders: [], pastOrders: [] })
+}
+
+exports.addDeliverer = async function (name) {
+  return new Deliverer({ name: name, score: 0, votes: 0, currentOrders: [] })
+}
+
+exports.addItem = async function (itemDetails) {
+  let item = new Item(itemDetails)
+  let restaurant = await Restaurant.findById(itemDetails.restaurant)
+  restaurant.menu.push(item.id)
+  restaurant.save()
+  return item
+}
+
 exports.getItems = async function () {
   return Item.find()
 }
@@ -155,9 +176,12 @@ exports.setCart = async function (userId, cartContents) {
   return { cart: user.cart, total: costOfCart(user.cart) }
 }
 
-exports.addAddress = async function (userId, address) { // need to change
+exports.addAddress = async function (userId, addressType, addressDetails) {
+  let address = new Address (addressDetails)
   let user = await User.findById(userId)
-  user.addresses.push(address)
+  if (addressType === 'home' || addressType === 'work') {
+    user.addresses[addressType] = address
+  } else user.addresses.others.push(address)
   let res = await user.save()
   return res.addresses
 }
@@ -167,7 +191,7 @@ exports.submitOrder = async function (userId, addressId) {
   let price = costOfCart(user.cart)
   let address = getAddressFromId(user, addressId)
   let order = new Order({ customer: userId, restaurant: user.cart[0].restaurant, items: user.cart, timePlaced: Date.now(), accepted: false, total: price, address: address })
-  user.cart = []
+  user.cart = [] // await issues?
   user.currentOrders.push(order)
   user.save()
 
