@@ -44,7 +44,7 @@ const OrderSchema = createSchema({
   timeFulfilled: Date,
   timeDelivered: Date,
   deliverer: { type: ObjectId, ref: 'Deliverer' },
-  price: Number,
+  total: Number,
   address: AddressSchema
 })
 const UserSchema = createSchema({
@@ -93,11 +93,11 @@ function costOfCart (cart) {
 }
 
 function getAddressFromId (user, id) {
-  if (user.addresses.home._id === id) {
+  if (user.addresses.home._id.toString() === id) {
     return user.addresses.home
-  } if (user.addresses.work._id === id) {
+  } if (user.addresses.work._id.toString() === id) {
     return user.addresses.work
-  } return user.addresses.others[user.addresses.others.findIndex(obj => obj._id === id)]
+  } return user.addresses.others[user.addresses.others.findIndex(obj => obj._id.toString() === id)]
 }
 
 // Exported methods
@@ -147,7 +147,7 @@ exports.getItems = async function () {
 }
 
 exports.getCart = async function (userId) {
-  let res = await User.findById(userId).populate('cart')
+  let res = await User.findById(userId).populate('cart.item')
   return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
@@ -173,7 +173,7 @@ exports.addToCart = async function (userId, item) {
   } else {
     user.cart[index].quantity++
   }
-  let res = await user.save().populate('cart')
+  let res = await user.save().populate('cart.item')
   return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
@@ -185,12 +185,12 @@ exports.removeFromCart = async function (userId, item) {
   } else {
     user.cart.splice(index, 1)
   }
-  let res = await user.save().populate('cart')
+  let res = await user.save().populate('cart.item')
   return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
 exports.setCart = async function (userId, cartContents) {
-  let user = await User.findByIdAndUpdate(userId, { cart: cartContents }).populate('cart')
+  let user = await User.findByIdAndUpdate(userId, { cart: cartContents }).populate('cart.item')
   return { cart: user.cart, total: costOfCart(user.cart) }
 }
 
@@ -206,19 +206,21 @@ exports.addAddress = async function (userId, addressType, addressDetails) {
 }
 
 exports.submitOrder = async function (userId, addressId) {
-  let user = await User.findById(userId).populate('cart')
+  let user = await User.findById(userId).populate('cart.item')
   let price = costOfCart(user.cart)
   let address = getAddressFromId(user, addressId)
-  let order = new Order({ customer: userId, restaurant: user.cart[0].restaurant, items: user.cart, timePlaced: Date.now(), accepted: false, total: price, address: address })
-  await order.save()
 
+  let restaurantId = user.cart[0].item.restaurant
+  let order = new Order({ customer: userId, restaurant: restaurantId, items: user.cart, timePlaced: Date.now(), accepted: false, total: price, address: address })
+  await order.save()
+  
   user.cart = []
   user.currentOrders.push(order)
-  await user.save()
+  user = await user.save()
 
-  let restaurant = await Restaurant.findById(user.cart[0].restaurant)
+  let restaurant = await Restaurant.findById(restaurantId)
   restaurant.currentOrders.push(order)
-  await restaurant.save()
+  restaurant = await restaurant.save()
 
   return order
 }
