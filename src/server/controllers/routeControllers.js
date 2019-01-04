@@ -5,6 +5,16 @@ exports.getDummyUser = async function (req, res) {
   res.send({ id: result })
 }
 
+exports.getDummyRestaurant = async function (req, res) {
+  let result = await model.getDummyRestaurant()
+  res.send({ id: result })
+}
+
+exports.getDummyDeliverer = async function (req, res) {
+  let result = await model.getDummyDeliverer()
+  res.send({ id: result })
+}
+
 exports.addUser = async function (req, res) {
   let result = await model.addUser(req.body.name)
   res.send(result)

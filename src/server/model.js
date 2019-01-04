@@ -107,6 +107,16 @@ exports.getDummyUser = async function () {
   return users[0].id
 }
 
+exports.getDummyRestaurant = async function () {
+  let restaurants = await Restaurant.find()
+  return restaurants[0].id
+}
+
+exports.getDummyDeliverer = async function () {
+  let deliverers = await Deliverer.find()
+  return deliverers[0].id
+}
+
 exports.addUser = async function (name) {
   let user = new User({ name: name, cart: [], currentOrders: [], pastOrders: [],  addresses: { home: {}, work: {}, others: [] } })
   return user.save()
@@ -243,6 +253,6 @@ exports.delivered = async function (orderId) {
   let deliverer = await Deliverer.findById(order.deliverer)
   deliverer.currentOrders.splice(deliverer.currentOrders.indexOf(orderId), 1)
   await deliverer.save()
-  
+
   return order
 }
