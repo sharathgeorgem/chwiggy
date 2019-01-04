@@ -1,4 +1,4 @@
-const model = require('./model')
+const model = require('../model')
 
 exports.placeOrder = async function (userId, addressId, connections) {
   let order = await model.submitOrder(userId, addressId)

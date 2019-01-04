@@ -1,4 +1,4 @@
-const model = require('./model')
+const model = require('../model')
 
 exports.getDummyUser = async function (req, res) {
   let result = await model.getDummyUser()
