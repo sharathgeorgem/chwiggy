@@ -23,7 +23,7 @@ async function initializeConnection () {
   let socket = io.connect(domain)
   let res = await http.getRequest(domain, 'user/dummy')
   socket.emit('identify', res.id)
-  setTimeout(() => makeOrder(res.id, socket))
+  setTimeout(() => makeOrder(res.id, socket), 1000)
   socket.on('orderAccepted', () => console.log('Order Accepted'))
   socket.on('delivererAssigned', () => console.log('Deliverer Assigned'))
   socket.on('delivererArrivedRestaurant', () => console.log('Deliverer Arrived at Restaurant'))

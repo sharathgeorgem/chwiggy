@@ -18,7 +18,9 @@ exports.acceptDelivery = async function (delivererId, orderId, connections) {
   if (order) {
     let deliverer = await model.getDelivererName(delivererId)
     connections[order.customer].emit('delivererAssigned', orderId, deliverer)
-  } else connections.deliverers[delivererId].emit('orderAlreadyAssigned')
+    Object.entries(connections.deliverers).forEach(([key, value]) => value.emit('orderTaken'))
+    // only emit event to previously messaged deliverers
+  }
 }
 
 exports.arrivedRestaurant = async function (orderId, connections) {

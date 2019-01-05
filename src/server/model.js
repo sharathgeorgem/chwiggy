@@ -38,7 +38,7 @@ const AddressSchema = createSchema({
 const OrderSchema = createSchema({
   customer: { type: ObjectId, ref: 'User' },
   restaurant: { type: ObjectId, ref: 'Restaurant' },
-  items: [{ type: ObjectId, ref: 'Item' }],
+  items: [{ item: {type: ObjectId, ref: 'Item' }, quantity: Number }],
   timePlaced: Date,
   accepted: Boolean,
   timeFulfilled: Date,
@@ -190,7 +190,7 @@ exports.removeFromCart = async function (userId, item) {
 }
 
 exports.setCart = async function (userId, cartContents) {
-  let user = await User.findByIdAndUpdate(userId, { cart: cartContents }).populate('cart.item')
+  let user = await User.findOneAndUpdate({ _id: userId }, { cart: cartContents }).populate('cart.item')
   return { cart: user.cart, total: costOfCart(user.cart) }
 }
 
@@ -226,7 +226,7 @@ exports.submitOrder = async function (userId, addressId) {
 }
 
 exports.acceptOrder = async function (orderId) {
-  return Order.findByIdAndUpdate(orderId, { accepted: true })
+  return Order.findOneAndUpdate({ _id: orderId }, { accepted: true })
 }
 
 exports.acceptDelivery = async function (deliverer, orderId) {
@@ -237,7 +237,7 @@ exports.acceptDelivery = async function (deliverer, orderId) {
 }
 
 exports.pickedUp = async function (orderId) {
-  let order = await Order.findByIdAndUpdate(orderId, { timeFulfilled: Date.now() })
+  let order = await Order.findOneAndUpdate({ _id: orderId }, { timeFulfilled: Date.now() })
   let restaurant = await Restaurant.findById(order.restaurant)
   restaurant.currentOrders.splice(restaurant.currentOrders.indexOf(orderId), 1)
   restaurant.pastOrders.push(order)
@@ -246,7 +246,7 @@ exports.pickedUp = async function (orderId) {
 }
 
 exports.delivered = async function (orderId) {
-  let order = await Order.findByIdAndUpdate(orderId, { timeDelivered: Date.now() })
+  let order = await Order.findOneAndUpdate({ _id: orderId }, { timeDelivered: Date.now() })
   let user = await User.findById(order.customer)
   user.currentOrders.splice(user.currentOrders.indexOf(orderId), 1)
   user.pastOrders.push(order)
