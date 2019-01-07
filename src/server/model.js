@@ -38,7 +38,7 @@ const AddressSchema = createSchema({
 const OrderSchema = createSchema({
   customer: { type: ObjectId, ref: 'User' },
   restaurant: { type: ObjectId, ref: 'Restaurant' },
-  items: [{ item: {type: ObjectId, ref: 'Item' }, quantity: Number }],
+  items: [{ item: { type: ObjectId, ref: 'Item' }, quantity: Number }],
   timePlaced: Date,
   accepted: Boolean,
   timeFulfilled: Date,
@@ -118,7 +118,7 @@ exports.getDummyDeliverer = async function () {
 }
 
 exports.addUser = async function (name) {
-  let user = new User({ name: name, cart: [], currentOrders: [], pastOrders: [],  addresses: { home: {}, work: {}, others: [] } })
+  let user = new User({ name: name, cart: [], currentOrders: [], pastOrders: [], addresses: { home: {}, work: {}, others: [] } })
   return user.save()
 }
 
@@ -195,7 +195,7 @@ exports.setCart = async function (userId, cartContents) {
 }
 
 exports.addAddress = async function (userId, addressType, addressDetails) {
-  let address = new Address (addressDetails)
+  let address = new Address(addressDetails)
   await address.save()
   let user = await User.findById(userId)
   if (addressType === 'home' || addressType === 'work') {
@@ -213,7 +213,7 @@ exports.submitOrder = async function (userId, addressId) {
   let restaurantId = user.cart[0].item.restaurant
   let order = new Order({ customer: userId, restaurant: restaurantId, items: user.cart, timePlaced: Date.now(), accepted: false, total: price, address: address })
   await order.save()
-  
+
   user.cart = []
   user.currentOrders.push(order)
   user = await user.save()

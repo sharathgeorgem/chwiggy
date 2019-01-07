@@ -35,7 +35,7 @@ async function setupDummyData () {
     cuisines: ['Beverages', 'Juices', 'Ice Cream'],
     phone: ['9739559814']
   })
-  
+
   addItem({
     name: 'Red Red Wine',
     description: 'Goes to your head',
