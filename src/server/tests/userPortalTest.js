@@ -7,7 +7,7 @@ const domain = 'http://localhost:8000'
 async function makeOrder (id, socket) {
   let res = await http.getRequest(domain, 'items')
   let cart = res.menu.map(item => Object.assign({}, { item: item.id, quantity: 1 }))
-  res = await http.request('POST', domain, `user/cart/${id}`, { cart: cart } )
+  res = await http.request('POST', domain, `user/cart/${id}`, { cart: cart })
   let address = {
     latitude: 12.972240,
     longitude: 77.646410,
@@ -15,7 +15,7 @@ async function makeOrder (id, socket) {
     apartment: 'Downstairs lobby',
     landmark: 'Near temple'
   }
-  res = await http.request('PUT', domain, `user/addresses/${id}/home`, { address: address})
+  res = await http.request('PUT', domain, `user/addresses/${id}/home`, { address: address })
   socket.emit('placeOrder', id, res.addresses.home.id)
 }
 
