@@ -1,38 +1,21 @@
-const http = require('http')
+const http = require('./utilities/promisifiedHTTP')
 
 const domain = 'http://localhost:8000'
 
-function serverRequest (mode, route, body) {
-  console.log('Submitting request')
-  return new Promise((resolve, reject) => {
-    let req = http.request(`${domain}/${route}`, { method: mode })
-    req.setHeader('Content-Type', 'application/json')
-    req.setHeader('Transfer-Encoding', 'chunked')
-    req.write(JSON.stringify(body), 'utf8')
-    req.end()
-    req.on('response', res => {
-      let data = ''
-      res.on('data', chunk => { data += chunk })
-      res.on('end', () => resolve(JSON.parse(data)))
-    })
-    req.on('error', (err) => reject(err))
-  })
-}
-
 async function addUser (name) {
-  return serverRequest('POST', 'user/new', {name: name})
+  return http.request('POST', domain, 'user/new', { name: name })
 }
 
 async function addDeliverer (name) {
-  return serverRequest('POST', 'deliverer/new', {name: name})
+  return http.request('POST', domain, 'deliverer/new', { name: name })
 }
 
 async function addRestaurant (details) {
-  return serverRequest('POST', 'restaurant/new', details)
+  return http.request('POST', domain, 'restaurant/new', details)
 }
 
 async function addItem (details) {
-  return serverRequest('POST', 'items/new', details)
+  return http.request('POST', domain, 'items/new', details)
 }
 
 async function setupDummyData () {

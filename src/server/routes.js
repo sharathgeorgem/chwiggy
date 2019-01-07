@@ -1,10 +1,15 @@
 const express = require('express')
 
-const controllers = require('./controllers')
+const controllers = require('./controllers/routeControllers')
 
 const router = express.Router()
 
-router.get('/user/dummy', controllers.getDummyUser) // only for development
+// only for development
+router.get('/user/dummy', controllers.getDummyUser)
+router.get('/restaurant/dummy', controllers.getDummyRestaurant)
+router.get('/deliverer/dummy', controllers.getDummyDeliverer)
+// ---
+
 router.get('/items', controllers.getItems)
 router.get('/user/cart/:userId', controllers.getCart)
 router.get('/user/addresses/:userId', controllers.getAddresses)

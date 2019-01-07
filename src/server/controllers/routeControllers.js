@@ -1,7 +1,17 @@
-const model = require('./model')
+const model = require('../model')
 
 exports.getDummyUser = async function (req, res) {
   let result = await model.getDummyUser()
+  res.send({ id: result })
+}
+
+exports.getDummyRestaurant = async function (req, res) {
+  let result = await model.getDummyRestaurant()
+  res.send({ id: result })
+}
+
+exports.getDummyDeliverer = async function (req, res) {
+  let result = await model.getDummyDeliverer()
   res.send({ id: result })
 }
 

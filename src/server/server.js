@@ -3,7 +3,7 @@ const cors = require('cors')
 const io = require('socket.io')
 
 const router = require('./routes')
-const eventControllers = require('./eventControllers')
+const eventControllers = require('./controllers/eventControllers')
 
 const port = 8000
 const app = express()

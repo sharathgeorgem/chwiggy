@@ -38,13 +38,13 @@ const AddressSchema = createSchema({
 const OrderSchema = createSchema({
   customer: { type: ObjectId, ref: 'User' },
   restaurant: { type: ObjectId, ref: 'Restaurant' },
-  items: [{ type: ObjectId, ref: 'Item' }],
+  items: [{ item: {type: ObjectId, ref: 'Item' }, quantity: Number }],
   timePlaced: Date,
   accepted: Boolean,
   timeFulfilled: Date,
   timeDelivered: Date,
   deliverer: { type: ObjectId, ref: 'Deliverer' },
-  price: Number,
+  total: Number,
   address: AddressSchema
 })
 const UserSchema = createSchema({
@@ -93,11 +93,11 @@ function costOfCart (cart) {
 }
 
 function getAddressFromId (user, id) {
-  if (user.addresses.home._id === id) {
+  if (user.addresses.home._id.toString() === id) {
     return user.addresses.home
-  } if (user.addresses.work._id === id) {
+  } if (user.addresses.work._id.toString() === id) {
     return user.addresses.work
-  } return user.addresses.others[user.addresses.others.findIndex(obj => obj._id === id)]
+  } return user.addresses.others[user.addresses.others.findIndex(obj => obj._id.toString() === id)]
 }
 
 // Exported methods
@@ -105,6 +105,16 @@ function getAddressFromId (user, id) {
 exports.getDummyUser = async function () {
   let users = await User.find()
   return users[0].id
+}
+
+exports.getDummyRestaurant = async function () {
+  let restaurants = await Restaurant.find()
+  return restaurants[0].id
+}
+
+exports.getDummyDeliverer = async function () {
+  let deliverers = await Deliverer.find()
+  return deliverers[0].id
 }
 
 exports.addUser = async function (name) {
@@ -137,7 +147,7 @@ exports.getItems = async function () {
 }
 
 exports.getCart = async function (userId) {
-  let res = await User.findById(userId).populate('cart')
+  let res = await User.findById(userId).populate('cart.item')
   return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
@@ -163,7 +173,7 @@ exports.addToCart = async function (userId, item) {
   } else {
     user.cart[index].quantity++
   }
-  let res = await user.save().populate('cart')
+  let res = await user.save().populate('cart.item')
   return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
@@ -175,12 +185,12 @@ exports.removeFromCart = async function (userId, item) {
   } else {
     user.cart.splice(index, 1)
   }
-  let res = await user.save().populate('cart')
+  let res = await user.save().populate('cart.item')
   return { cart: res.cart, total: costOfCart(res.cart) }
 }
 
 exports.setCart = async function (userId, cartContents) {
-  let user = await User.findByIdAndUpdate(userId, { cart: cartContents }).populate('cart')
+  let user = await User.findOneAndUpdate({ _id: userId }, { cart: cartContents }).populate('cart.item')
   return { cart: user.cart, total: costOfCart(user.cart) }
 }
 
@@ -196,25 +206,27 @@ exports.addAddress = async function (userId, addressType, addressDetails) {
 }
 
 exports.submitOrder = async function (userId, addressId) {
-  let user = await User.findById(userId).populate('cart')
+  let user = await User.findById(userId).populate('cart.item')
   let price = costOfCart(user.cart)
   let address = getAddressFromId(user, addressId)
-  let order = new Order({ customer: userId, restaurant: user.cart[0].restaurant, items: user.cart, timePlaced: Date.now(), accepted: false, total: price, address: address })
-  await order.save()
 
+  let restaurantId = user.cart[0].item.restaurant
+  let order = new Order({ customer: userId, restaurant: restaurantId, items: user.cart, timePlaced: Date.now(), accepted: false, total: price, address: address })
+  await order.save()
+  
   user.cart = []
   user.currentOrders.push(order)
-  await user.save()
+  user = await user.save()
 
-  let restaurant = await Restaurant.findById(user.cart[0].restaurant)
+  let restaurant = await Restaurant.findById(restaurantId)
   restaurant.currentOrders.push(order)
-  await restaurant.save()
+  restaurant = await restaurant.save()
 
   return order
 }
 
 exports.acceptOrder = async function (orderId) {
-  return Order.findByIdAndUpdate(orderId, { accepted: true })
+  return Order.findOneAndUpdate({ _id: orderId }, { accepted: true })
 }
 
 exports.acceptDelivery = async function (deliverer, orderId) {
@@ -225,7 +237,7 @@ exports.acceptDelivery = async function (deliverer, orderId) {
 }
 
 exports.pickedUp = async function (orderId) {
-  let order = await Order.findByIdAndUpdate(orderId, { timeFulfilled: Date.now() })
+  let order = await Order.findOneAndUpdate({ _id: orderId }, { timeFulfilled: Date.now() })
   let restaurant = await Restaurant.findById(order.restaurant)
   restaurant.currentOrders.splice(restaurant.currentOrders.indexOf(orderId), 1)
   restaurant.pastOrders.push(order)
@@ -234,7 +246,7 @@ exports.pickedUp = async function (orderId) {
 }
 
 exports.delivered = async function (orderId) {
-  let order = await Order.findByIdAndUpdate(orderId, { timeDelivered: Date.now() })
+  let order = await Order.findOneAndUpdate({ _id: orderId }, { timeDelivered: Date.now() })
   let user = await User.findById(order.customer)
   user.currentOrders.splice(user.currentOrders.indexOf(orderId), 1)
   user.pastOrders.push(order)
@@ -243,6 +255,6 @@ exports.delivered = async function (orderId) {
   let deliverer = await Deliverer.findById(order.deliverer)
   deliverer.currentOrders.splice(deliverer.currentOrders.indexOf(orderId), 1)
   await deliverer.save()
-  
+
   return order
 }
