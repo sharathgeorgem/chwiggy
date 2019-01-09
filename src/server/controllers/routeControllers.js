@@ -31,7 +31,7 @@ exports.addDeliverer = async function (req, res) {
 }
 
 exports.addItem = async function (req, res) {
-  let result = await model.addItem(req.body)
+  let result = await model.addItem(req.body.item, req.body.category)
   res.send(result)
 }
 

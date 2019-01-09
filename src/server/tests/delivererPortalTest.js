@@ -14,7 +14,7 @@ function handleNewOrder (order, id, socket) {
 
 async function initializeConnection () {
   let socket = io.connect(domain)
-  let res = await http.getRequest(domain, 'deliverer/dummy')
+  let res = await http.getRequest('http', 'json', domain, 'deliverer/dummy')
   socket.emit('identifyDeliverer', res.id)
   socket.on('newOrder', order => handleNewOrder(order, res.id, socket))
 }

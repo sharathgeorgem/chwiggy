@@ -15,7 +15,7 @@ function onOrderFulfilled (orderId) {
 
 async function initializeConnection () {
   let socket = io.connect(domain)
-  let res = await http.getRequest(domain, 'restaurant/dummy')
+  let res = await http.getRequest('http', 'json', domain, 'restaurant/dummy')
   socket.emit('identify', res.id)
   socket.on('newOrder', order => handleNewOrder(order, socket))
   socket.on('delivererArrivedRestaurant', (orderId, delivererId) => console.log(`${delivererId} waiting to pick up ${orderId}`))
