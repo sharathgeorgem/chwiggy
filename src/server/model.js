@@ -145,8 +145,9 @@ exports.addItem = async function (itemDetails, category) {
   return item
 }
 
-exports.getItems = async function () { // may need populate
-  return Restaurant.find()[0].menu
+exports.getItems = async function () {
+  let res = await Restaurant.find().populate('menu.items')
+  return res[0].menu
 }
 
 exports.getCart = async function (userId) {
