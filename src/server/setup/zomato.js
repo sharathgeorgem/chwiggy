@@ -2,6 +2,7 @@ const http = require('../utilities/promisifiedHTTP')
 
 const key = '10a6760a0a87faec6c36ce16cd426eb6'
 const domain = 'http://localhost:8000'
+const placeholder = 'https://www.engel-vimbuch.de/images/placeholder/restaurant_raeume/restaurant_raeume_schnapsstueble.jpg'
 
 async function addRestaurant (details) {
   return http.request('http', 'POST', domain, 'restaurant/new', details)
@@ -26,8 +27,8 @@ function formatRestaurantData (data) {
     cost: r.restaurant.average_cost_for_two,
     score: Math.round(Number(r.restaurant.user_rating.aggregate_rating) * Number(r.restaurant.user_rating.votes)),
     votes: Number(r.restaurant.user_rating.votes),
-    thumb: r.restaurant.thumb,
-    img: r.restaurant.featured_image
+    thumb: r.restaurant.thumb || placeholder,
+    img: r.restaurant.featured_image || placeholder
   }))
 }
 
