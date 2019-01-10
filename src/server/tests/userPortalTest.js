@@ -9,8 +9,8 @@ async function makeOrder (id, socket) {
   let cart = res.menu.map(item => Object.assign({}, { item: item.id, quantity: 1 }))
   res = await http.request('http', 'POST', domain, `user/cart/${id}`, { cart: cart })
   let address = {
-    latitude: 12.972240,
-    longitude: 77.646410,
+    latitude: 12.9615365,
+    longitude: 77.6419672,
     value: '2698, 19th Main Rd, HAL 2nd Stage, Kodihalli, Bengaluru, Karnataka 560008',
     apartment: 'Downstairs lobby',
     landmark: 'Near temple'

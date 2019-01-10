@@ -60,11 +60,12 @@ const RestaurantSchema = createSchema({
   cost: Number,
   score: Number,
   votes: Number,
+  thumb: String,
+  img: String,
   cuisines: [String],
   menu: [{ category: String, items: [{ type: ObjectId, ref: 'Item' }] }],
   currentOrders: [{ type: ObjectId, ref: 'Order' }],
   pastOrders: [{ type: ObjectId, ref: 'Order' }]
-  // add thumb and image fields
 })
 const DelivererSchema = createSchema({
   name: String,
@@ -143,6 +144,10 @@ exports.addItem = async function (itemDetails, category) {
   } else restaurant.menu.push({ category: category, items: [item.id] })
   await restaurant.save()
   return item
+}
+
+exports.getRestaurants = async function () {
+  return Restaurant.find()
 }
 
 exports.getItems = async function () {
