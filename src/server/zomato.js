@@ -22,10 +22,10 @@ function formatRestaurantData (data) {
       apartment: '',
       landmark: r.restaurant.location.locality
     },
-    cuisines: r.restaurant.cuisines,
+    cuisines: r.restaurant.cuisines.split(', '),
     cost: r.restaurant.average_cost_for_two,
-    score: r.restaurant.user_rating['aggregate rating'] * r.restaurant.user_rating.votes,
-    votes: r.restaurant.user_rating.votes,
+    score: Math.round(Number(r.restaurant.user_rating.aggregate_rating) * Number(r.restaurant.user_rating.votes)),
+    votes: Number(r.restaurant.user_rating.votes),
     thumb: r.restaurant.thumb,
     img: r.restaurant.featured_image
   }))
