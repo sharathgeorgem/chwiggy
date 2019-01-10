@@ -4,9 +4,13 @@ const https = require('https')
 const modeDict = { 'http': http, 'https': https }
 const formatDict = { 'json': JSON.parse, 'string': String }
 
-exports.getRequest = function (mode, format, domain, route) {
+exports.getRequest = function (mode, format, domain, route, headers) {
   return new Promise((resolve, reject) => {
-    let req = modeDict[mode].get(`${domain}/${route}`)
+    let req = modeDict[mode].request(`${domain}/${route}`, { method: 'GET' })
+    if (headers) {
+      Object.entries(headers).forEach(([key, val]) => req.setHeader(key, val))
+    }
+    req.end()
     req.on('response', res => {
       let data = ''
       res.on('data', chunk => { data += chunk })
@@ -16,13 +20,16 @@ exports.getRequest = function (mode, format, domain, route) {
   })
 }
 
-exports.request = function (mode, method, domain, route, body) {
+exports.request = function (mode, method, domain, route, body, headers) {
   return new Promise((resolve, reject) => {
     let req = modeDict[mode].request(`${domain}/${route}`, { method: method })
     if (body) {
       req.setHeader('Content-Type', 'application/json')
       req.setHeader('Transfer-Encoding', 'chunked')
       req.write(JSON.stringify(body), 'utf8')
+    }
+    if (headers) {
+      Object.entries(headers).forEach(([key, val]) => req.setHeader(key, val))
     }
     req.end()
     req.on('response', res => {
