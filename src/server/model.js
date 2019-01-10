@@ -5,7 +5,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 
 mongoose.connect('mongodb://localhost/test', { useNewUrlParser: true })
 const db = mongoose.connection
-db.on('error', console.error.bind(console, 'connection error:'))
+db.on('error', console.log)
 db.once('open', function () {
   console.log('Mongoose Connected')
 })
@@ -67,6 +67,8 @@ const RestaurantSchema = createSchema({
   currentOrders: [{ type: ObjectId, ref: 'Order' }],
   pastOrders: [{ type: ObjectId, ref: 'Order' }]
 })
+RestaurantSchema.virtual('rating').get(function () { return this.score / this.votes })
+
 const DelivererSchema = createSchema({
   name: String,
   score: Number,

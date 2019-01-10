@@ -32,6 +32,10 @@ async function setupDummyData () {
       landmark: ''
     },
     cost: 100,
+    score: 0,
+    votes: 0,
+    thumb: 'https://i0.wp.com/files.hungryforever.com/wp-content/uploads/2016/10/22131655/lassi-shop-on-the-rocks-church-street-bangalore.jpg',
+    img: 'https://i0.wp.com/files.hungryforever.com/wp-content/uploads/2016/10/22131655/lassi-shop-on-the-rocks-church-street-bangalore.jpg',
     cuisines: ['Beverages', 'Juices', 'Ice Cream']
   })
 
@@ -64,6 +68,14 @@ async function setupDummyData () {
     description: 'Finely aged for the better part of a decade',
     price: 1073,
     img: 'https://www.domechan.com/shop/1424-thickbox_default/ramune-working-lemonade-japanese-taste-pineapple-200-ml.jpg',
+    available: true,
+    restaurant: res.id
+  }, 'Beverages')
+  await addItem({
+    name: 'Milk',
+    description: 'Piyo glassful Doodh hai must in every season, Piyo doodh for healthy reason',
+    price: 40,
+    img: 'http://betterhousekeeper.com/wp-content/uploads/2014/05/bottle-and-glass-of-milk.jpg',
     available: true,
     restaurant: res.id
   }, 'Beverages')

@@ -28,7 +28,7 @@ function addConnection (id, client) {
 }
 
 function addDeliverer (id, client) {
-  connections.deliverers[id] = client
+  connections.deliverers[id] = { socket: client, latitude: 0, longitude: 0 }
 }
 
 serverSocket.on('connection', client => {
@@ -41,5 +41,5 @@ serverSocket.on('connection', client => {
   client.on('arrivedAtRestaurant', (orderId) => eventControllers.arrivedRestaurant(orderId, connections))
   client.on('pickedUp', (orderId) => eventControllers.pickedUp(orderId, connections))
   client.on('delivered', (orderId) => eventControllers.delivered(orderId, connections))
-  client.on('updateLocation', (delivererId, location) => eventControllers.updateLocation(delivererId, location, connections))
+  client.on('updateLocation', (delivererId, lat, long) => eventControllers.updateLocation(delivererId, lat, long, connections))
 })

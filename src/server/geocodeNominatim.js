@@ -1,3 +1,4 @@
+// This module is currently deprecated in favor of Mapquest geocoding
 const http = require('./utilities/promisifiedHTTP')
 
 const domain = 'https://nominatim.openstreetmap.org'

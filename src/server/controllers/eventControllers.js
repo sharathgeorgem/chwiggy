@@ -8,7 +8,7 @@ exports.placeOrder = async function (userId, addressId, connections) {
 exports.acceptOrder = async function (orderId, connections) {
   console.log('Order accepted')
   let order = await model.acceptOrder(orderId).catch(console.log)
-  Object.keys(connections.deliverers).forEach(id => connections.deliverers[id].emit('newOrder', order)) // change to nearby deliverers
+  Object.keys(connections.deliverers).forEach(id => connections.deliverers[id].socket.emit('newOrder', order)) // change to nearby deliverers
   connections[order.customer].emit('orderAccepted', orderId)
 }
 
@@ -18,7 +18,7 @@ exports.acceptDelivery = async function (delivererId, orderId, connections) {
   if (order) {
     let deliverer = await model.getDelivererName(delivererId).catch(console.log)
     connections[order.customer].emit('delivererAssigned', orderId, deliverer)
-    Object.entries(connections.deliverers).forEach(([key, value]) => value.emit('orderTaken'))
+    Object.entries(connections.deliverers).forEach(([key, value]) => value.socket.emit('orderTaken'))
     // only emit event to previously messaged deliverers
   }
 }
@@ -42,6 +42,8 @@ exports.delivered = async function (orderId, connections) {
   connections[order.customer].emit('orderDelivered', orderId)
 }
 
-exports.updateLocation = async function (delivererId, location, connections) {
-  // store in connections and emit to all relevant customers
+exports.updateLocation = async function (delivererId, lat, long, connections) {
+  connections.deliverers[delivererId].latitude = lat
+  connections.deliverers[delivererId].longitude = long
+  // emit to all relevant customers
 }
