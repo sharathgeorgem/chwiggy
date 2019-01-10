@@ -1,4 +1,4 @@
-const http = require('./utilities/promisifiedHTTP')
+const http = require('../utilities/promisifiedHTTP')
 
 const key = '10a6760a0a87faec6c36ce16cd426eb6'
 const domain = 'http://localhost:8000'
