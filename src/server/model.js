@@ -125,7 +125,19 @@ exports.addUser = async function (name) {
 
 exports.addRestaurant = async function (restaurantDetails) {
   let address = new Address(restaurantDetails.address)
-  let restaurant = new Restaurant({ name: restaurantDetails.name, address: address, cost: restaurantDetails.cost, score: restaurantDetails.score, votes: restaurantDetails.votes, cuisines: restaurantDetails.cuisines, phone: restaurantDetails.phone, menu: [], currentOrders: [], pastOrders: [] })
+  let restaurant = new Restaurant({
+    name: restaurantDetails.name,
+    address: address,
+    cost: restaurantDetails.cost,
+    score: restaurantDetails.score,
+    votes: restaurantDetails.votes,
+    cuisines: restaurantDetails.cuisines,
+    thumb: restaurantDetails.thumb,
+    img: restaurantDetails.img,
+    menu: [],
+    currentOrders: [],
+    pastOrders: []
+  })
   return restaurant.save()
 }
 
